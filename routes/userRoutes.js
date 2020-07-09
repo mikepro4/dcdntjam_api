@@ -19,13 +19,22 @@ module.exports = app => {
 				if (err) res.status(400).send({ error: "true", error: err });
 				if (info) {
 					Users.findOne({ _id: req.body._id }, async (err, user) => {
-						if (jam) {
+						if (user) {
 							res.json(user);
 						}
 					});
 				}
 			}
         );
+	})
+	
+	app.post("/user", async (req, res) => {
+		console.log(req.body.googleId)
+		Users.findOne({ googleId: req.body.googleId }, async (err, user) => {
+			if (user) {
+				res.json(user);
+			}
+		});
     })
 
 }

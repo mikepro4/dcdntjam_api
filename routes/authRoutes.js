@@ -63,7 +63,7 @@ module.exports = app => {
 		if (req.user) {
 			Users.findOne(
 				{
-					profileId: req.user.profile.googleId
+					googleId: req.user.googleId
 				},
 				async (err, user) => {
 					if (user) {
