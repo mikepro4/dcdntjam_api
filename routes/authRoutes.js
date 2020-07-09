@@ -1,4 +1,6 @@
 const passport = require("passport");
+const mongoose = require("mongoose");
+const Users = mongoose.model("users");
 
 module.exports = app => {
 	app.get(
@@ -37,6 +39,46 @@ module.exports = app => {
 	});
 
 	app.get("/current_user", (req, res) => {
-		res.send(req.user);
+		// const { criteria, sortProperty, offset, limit } = req.body;
+		// const query = User.find({
+		// 	profileId: req.user.profile.googleId
+		// })
+		// 	.sort({ [sortProperty]: -1 })
+		// 	.skip(offset)
+		// 	.limit(limit);
+
+		// return Promise.all(
+		// 	[query, User.find(buildQuery(criteria)).countDocuments()]
+		// ).then(
+		// 	results => {
+		// 		return res.json({
+		// 			all: results[0],
+		// 			count: results[1],
+		// 			offset: offset,
+		// 			limit: limit,
+		// 			googleInfo: req.user
+		// 		});
+		// 	}
+		// );
+		if (req.user) {
+			Users.findOne(
+				{
+					profileId: req.user.profile.googleId
+				},
+				async (err, user) => {
+					if (user) {
+						res.json(user)
+					}
+				}
+			);
+		} else {
+			res.json()
+		}
+		
 	});
 };
+
+const buildQuery = criteria => {
+	const query = {};
+};
+

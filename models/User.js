@@ -7,6 +7,7 @@ const userSchema = new Schema({
 	refreshToken: String,
 	profile: Object,
 	created: { type: Date, default: Date.now },
+	username: String
 });
 
 mongoose.model("users", userSchema);
