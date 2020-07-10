@@ -7,7 +7,13 @@ const userSchema = new Schema({
 	refreshToken: String,
 	profile: Object,
 	created: { type: Date, default: Date.now },
-	username: String
+	displayName: String,
+	username: String,
+	bio: String,
+	website: String,
+	instagramHandle: String,
+	tiktokHandle: String,
+	youtubeHandle: String
 });
 
 mongoose.model("users", userSchema);

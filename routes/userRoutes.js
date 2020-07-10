@@ -29,7 +29,6 @@ module.exports = app => {
 	})
 	
 	app.post("/user", async (req, res) => {
-		console.log(req.body.googleId)
 		Users.findOne({ googleId: req.body.googleId }, async (err, user) => {
 			if (user) {
 				res.json(user);

@@ -39,6 +39,7 @@ app.use(express.static(PUBLIC_DIR));
 require("./services/passport");
 require("./routes/authRoutes")(app);
 require("./routes/userRoutes")(app);
+require("./routes/jamRoutes")(app);
 
 
 app.get("/", (req, res) => {
