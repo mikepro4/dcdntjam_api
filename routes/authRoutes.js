@@ -10,7 +10,7 @@ module.exports = app => {
 				"profile",
 				"email",
 				"https://www.googleapis.com/auth/youtube",
-				"https://www.googleapis.com/auth/youtube.upload"
+				"https://www.googleapis.com/auth/youtube.channel-memberships.creator"
 			],
 			accessType: 'offline',
 			approvalPrompt: 'force'

@@ -34,6 +34,47 @@ module.exports = app => {
 				res.json(user);
 			}
 		});
-    })
+	})
+	
+	app.post("/update_token", requireLogin, async (req, res) => {
+		// const searchReq = await axios.request({
+		// 	url: `https://oauth2.googleapis.com/token`,
+		// 	method: "post",
+		// 	client_id: keys.googleClientID,
+		// 	client_secret: keys.googleClientSecret,
+		// 	refresh_token: req.body.refreshToken,
+		// 	grant_type: "refresh_token"
+		//   })
+		// console.log(searchReq)
+		// console.log(req.body.refreshToken)
+
+		const searchReq = await axios.post("https://oauth2.googleapis.com/token", {
+			client_id: keys.googleClientID,
+			client_secret: keys.googleClientSecret,
+			refresh_token: req.body.refreshToken,
+			grant_type: "refresh_token"
+		})
+
+		Users.update(
+			{
+				refreshToken: req.body.refreshToken
+			},
+			{
+				$set:  {
+					accessToken: searchReq.data.access_token
+				}
+			},
+			async (err, info) => {
+				if (err) res.status(400).send({ error: "true", error: err });
+				if (info) {
+					Users.findOne({ refreshToken: req.body.refreshToken }, async (err, user) => {
+						if (user) {
+							res.json(user);
+						}
+					});
+				}
+			}
+		);
+	})
 
 }

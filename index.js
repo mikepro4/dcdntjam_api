@@ -11,7 +11,7 @@ const STATIC_DIR = "static";
 
 // Models
 require("./models/User");
-require("./models/Jam");
+require("./models/Video");
 
 mongoose.Promise = global.Promise;
 const options = {
@@ -39,7 +39,7 @@ app.use(express.static(PUBLIC_DIR));
 require("./services/passport");
 require("./routes/authRoutes")(app);
 require("./routes/userRoutes")(app);
-require("./routes/jamRoutes")(app);
+require("./routes/videoRoutes")(app);
 
 
 app.get("/", (req, res) => {
