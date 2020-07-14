@@ -40,6 +40,7 @@ require("./services/passport");
 require("./routes/authRoutes")(app);
 require("./routes/userRoutes")(app);
 require("./routes/videoRoutes")(app);
+require("./routes/searchVideos")(app);
 
 
 app.get("/", (req, res) => {
