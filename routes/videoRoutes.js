@@ -5,6 +5,7 @@ const { google } = require("googleapis");
 
 const mongoose = require("mongoose");
 const Video = mongoose.model("videos");
+const Users = mongoose.model("users");
 // const OAuth2 = require("google-oauth2")
 const OAuth2 = google.auth.OAuth2;
 
@@ -113,47 +114,100 @@ module.exports = app => {
 	});
 
 	app.post("/get_channel_info", async (req, res) => {
-		console.log(req.body)
+		
 
-		var oauth2Client = new OAuth2(keys.googleClientID, keys.googleClientSecret, "http://localhost:5000/api/auth/google/callback");
+		Users.findOne(
+			{
+				channelId: req.body.channelId
+			},
+			async (err, user) => {
+				if (user) {
+					res.json(user)
+				} else {
+					console.log(req.body)
 
-		oauth2Client.credentials = {
-			access_token: req.body.accessToken
-		}
+					var oauth2Client = new OAuth2(keys.googleClientID, keys.googleClientSecret, "http://localhost:5000/api/auth/google/callback");
 
-		google.youtube({
-				version: "v3",
-				auth: oauth2Client
-			}).channels.list(
-				{
-					part: "snippet",
-					id: req.body.channelId,
-					headers: {
-						Authorization: 'Bearer ' + req.body.accessToken,
-						Accept: 'application/json',
+					oauth2Client.credentials = {
+						access_token: req.body.accessToken
 					}
-				},
-				function(err, data, response) {
-					if (err) {
-						console.error("Error: " + err);
-						res.json({
-							status: "error",
-							err: err,
-							data: response
-						});
-					}
-					if (data) {
-						console.log(data);
-						res.json({
-							status: "ok",
-							data: data
-						});
-					}
-					if (response) {
-						console.log(response);
-						console.log("Status code: " + response.statusCode);
-					}
+					google.youtube({
+						version: "v3",
+						auth: oauth2Client
+					}).channels.list(
+						{
+							part: "snippet",
+							id: req.body.channelId,
+							headers: {
+								Authorization: 'Bearer ' + req.body.accessToken,
+								Accept: 'application/json',
+							}
+						},
+						async (err, data, response) => {
+							if (err) {
+								console.error("Error: " + err);
+								res.json({
+									status: "error",
+									err: err,
+									data: response
+								});
+							}
+							if (data) {
+								console.log(data.data.items[0])
+
+								const newUser = await new Users({
+									status: {
+										type: "automatic",
+										date: new Date()
+									},
+									channelId: data.data.items[0].id,
+									channelInfo: data.data.items[0].snippet,
+									customUrl: data.data.items[0].snippet.customUrl,
+									displayName: data.data.items[0].snippet.title
+								}).save();
+
+								res.json(newUser);
+
+								// Users.insert(
+								// 	{
+								// 		status: {
+								// 			type: "automatic",
+								// 			date: new Date()
+								// 		},
+								// 		channelId: data.data.items[0].id,
+								// 		channelInfo: data.data.items[0].snippet,
+								// 		customUrl: data.data.items[0].dcdnt,
+								// 	},
+								// 	async (err, user) => {
+								// 		res.json({
+								// 			status: "created user",
+								// 			user: user
+								// 		});
+								// 	}
+								// )
+
+								// const newUser = await new User({
+								// 	status: {
+								// 		type: "automatic",
+								// 		date: new Date()
+								// 	},
+								// 	channelId: data.data.items[0].id,
+								// 	channelInfo: data.data.items[0].snippet,
+								// 	customUrl: data.data.items[0].dcdnt,
+								// 	googleId: profile.id,
+								// 	profile
+								// }).save();
+
+								
+							}
+							if (response) {
+								console.log(response);
+								console.log("Status code: " + response.statusCode);
+							}
+						}
+					);
 				}
-			);
+			}
+		);
 	});
 };
