@@ -109,7 +109,7 @@ module.exports = app => {
 						Accept: 'application/json',
 					}
 				},
-				function(err, data, response) {
+				async (err, data, response) => {
 					if (err) {
 						console.error("Error: " + err);
 						res.json({
@@ -117,67 +117,106 @@ module.exports = app => {
 							err: err,
 							data: response
 						});
-						// Users.update(
-						// 	{
-						// 		accessToken: req.body.accessToken
-						// 	},
-						// 	{
-						// 		$set: {
-						// 			status: {
-						// 				type: "watcher",
-						// 				date: new Date()
-						// 			},
-						// 		}
-						// 	},
-						// 	async (err, info) => {
-						// 		if (err) res.status(400).send({ error: "true", error: err });
-						// 		if (info) {
-						// 			Users.findOne({ accessToken: req.body.accessToken}, async (err, user) => {
-						// 				if (user) {
-						// 					res.json(user);
-						// 				}
-						// 			});
-						// 		}
-						// 	}
-						// );
 					}
 					if (data) {
-						// res.json({
-						// 	status: "ok",
-						// 	data: data
-						// });
-
+					
 						console.log(data)
 
 						if(data.data.items) {
 							let channelInfo = data.data.items[0];
 
-							Users.update(
-								{
-									accessToken: req.body.accessToken
-								},
-								{
-									$set: {
-										status: {
-											type: "channelOwner",
-											date: new Date()
-										},
-										customUrl: channelInfo.snippet.customUrl,
-										channelId: channelInfo.id,
-										channelInfo: channelInfo.snippet
-									}
-								},
-								async (err, info) => {
-									if (err) res.status(400).send({ error: "true", error: err });
-									if (info) {
-										Users.findOne({ accessToken: req.body.accessToken}, async (err, user) => {
-											if (user) {
-												res.json(user);
+							Users.findOne({ 
+								channelId: channelInfo.id
+							}, async (err, user) => {
+								if (user) {
+									Users.remove({ 
+										channelId: channelInfo.id 
+									}, async (err, ) => {
+										if (err) return res.send(err);
+										
+										Users.update(
+											{
+												accessToken: req.body.accessToken
+											},
+											{
+												$set: {
+													status: {
+														type: "channelOwner",
+														date: new Date()
+													},
+													customUrl: channelInfo.snippet.customUrl,
+													channelId: channelInfo.id,
+													channelInfo: channelInfo.snippet
+												}
+											},
+											async (err, info) => {
+												if (err) res.status(400).send({ error: "true", error: err });
+												if (info) {
+													Users.findOne({ accessToken: req.body.accessToken}, async (err, user) => {
+														if (user) {
+															res.json(user);
+														}
+													});
+												}
 											}
-										});
-									}
+										);
+									});
+								} else {
+									Users.update(
+										{
+											accessToken: req.body.accessToken
+										},
+										{
+											$set: {
+												status: {
+													type: "channelOwner",
+													date: new Date()
+												},
+												customUrl: channelInfo.snippet.customUrl,
+												channelId: channelInfo.id,
+												channelInfo: channelInfo.snippet
+											}
+										},
+										async (err, info) => {
+											if (err) res.status(400).send({ error: "true", error: err });
+											if (info) {
+												Users.findOne({ accessToken: req.body.accessToken}, async (err, user) => {
+													if (user) {
+														res.json(user);
+													}
+												});
+											}
+										}
+									);
 								}
-							);
+							});
+
+							// Users.update(
+							// 	{
+							// 		accessToken: req.body.accessToken
+							// 	},
+							// 	{
+							// 		$set: {
+							// 			status: {
+							// 				type: "channelOwner",
+							// 				date: new Date()
+							// 			},
+							// 			customUrl: channelInfo.snippet.customUrl,
+							// 			channelId: channelInfo.id,
+							// 			channelInfo: channelInfo.snippet
+							// 		}
+							// 	},
+							// 	async (err, info) => {
+							// 		if (err) res.status(400).send({ error: "true", error: err });
+							// 		if (info) {
+							// 			Users.findOne({ accessToken: req.body.accessToken}, async (err, user) => {
+							// 				if (user) {
+							// 					res.json(user);
+							// 				}
+							// 			});
+							// 		}
+							// 	}
+							// );
 						} else {
 							Users.update(
 								{
