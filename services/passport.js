@@ -2,6 +2,7 @@ const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const mongoose = require("mongoose");
 const keys = require("../config/keys");
+const { initial } = require("lodash");
 
 const User = mongoose.model("users");
 
@@ -30,8 +31,12 @@ passport.use(
 				return done(null, existingUser);
 			}
 
+
 			const user = await new User({
-				credits: 100,
+				status: {
+					type: "initial",
+					date: new Date()
+				},
 				accessToken,
 				refreshToken,
 				googleId: profile.id,

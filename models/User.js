@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
+	status: Object,
+	channelId: String,
+	channelInfo: Object,
 	googleId: String,
 	accessToken: String,
 	refreshToken: String,

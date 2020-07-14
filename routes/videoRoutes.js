@@ -8,10 +8,6 @@ const Video = mongoose.model("videos");
 // const OAuth2 = require("google-oauth2")
 const OAuth2 = google.auth.OAuth2;
 
-const YOUTUBE_API_KEY = "AIzaSyAzvjjStBKyUYtoEwKWwR5XFVassNhrnSc"
-// const YOUTUBE_API_KEY = "AIzaSyBEtIaWbwlrZyxjz43bSQAVxgrk21Od9zg"
-
-
 module.exports = app => {
 
 	app.post("/youtube_video_details", requireLogin, async (req, res) => {
@@ -31,12 +27,12 @@ module.exports = app => {
 				} else {
 					console.log(`https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=${
 							req.body.googleId
-						}&key=${YOUTUBE_API_KEY}`
+						}&key=${keys.youtubeAPI}`
 					)
 					const searchReq = await axios.get(
 						`https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${
 							req.body.googleId
-						}&key=${YOUTUBE_API_KEY}`
+						}&key=${keys.youtubeAPI}`
 					);
 
 					res.json({
@@ -73,10 +69,6 @@ module.exports = app => {
 
 	app.post("/get_channel_id", async (req, res) => {
 
-		// var oauth2Client = new OAuth2({
-		// 	client_id: keys.clientID,
-		// 	client_secret: keys.googleClientSecret
-		// });
 
 		var oauth2Client = new OAuth2(keys.googleClientID, keys.googleClientSecret, "http://localhost:5000/api/auth/google/callback");
 
@@ -84,27 +76,6 @@ module.exports = app => {
 			access_token: req.body.accessToken
 		}
 
-		// const searchReq = await axios.get(
-		// 	`https://www.googleapis.com/youtube/v3/channels?mine=truepart=snippet&key=${YOUTUBE_API_KEY}`
-		// );
-
-		// const searchReq = await axios.request({
-		// 	url: `https://www.googleapis.com/youtube/v3/channels?mine=true&part=snippet&key=${YOUTUBE_API_KEY}`,
-		// 	method: "get",
-		// 	headers: {
-		// 		Authorization: 'Bearer ' + req.body.accessToken,
-		// 		Accept: 'application/json',
-		// 		auth: oauth2Client
-
-		// 	  }
-		//   })
-		//   console.log(searchReq)
-
-		// res.json({
-		// 	response: searchReq.data
-		// });
-
-		console.log(oauth2Client)
 		google.youtube({
 				version: "v3",
 				auth: oauth2Client
