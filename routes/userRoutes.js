@@ -38,6 +38,14 @@ module.exports = app => {
 			}
 		});
 	})
+
+	app.post("/user_by_customUrl", async (req, res) => {
+		Users.findOne({ customUrl: req.body.customUrl }, async (err, user) => {
+			if (user) {
+				res.json(user);
+			}
+		});
+	})
 	
 	app.post("/update_token", requireLogin, async (req, res) => {
 		// const searchReq = await axios.request({
@@ -154,8 +162,9 @@ module.exports = app => {
 											type: "channelOwner",
 											date: new Date()
 										},
+										customUrl: channelInfo.snippet.customUrl,
 										channelId: channelInfo.id,
-										channelInfo: channelInfo.snippet,
+										channelInfo: channelInfo.snippet
 									}
 								},
 								async (err, info) => {

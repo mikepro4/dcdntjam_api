@@ -3,6 +3,7 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema({
 	status: Object,
+	customUrl: String,
 	channelId: String,
 	channelInfo: Object,
 	googleId: String,

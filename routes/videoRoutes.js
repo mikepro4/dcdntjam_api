@@ -111,4 +111,49 @@ module.exports = app => {
 				}
 			);
 	});
+
+	app.post("/get_channel_info", async (req, res) => {
+		console.log(req.body)
+
+		var oauth2Client = new OAuth2(keys.googleClientID, keys.googleClientSecret, "http://localhost:5000/api/auth/google/callback");
+
+		oauth2Client.credentials = {
+			access_token: req.body.accessToken
+		}
+
+		google.youtube({
+				version: "v3",
+				auth: oauth2Client
+			}).channels.list(
+				{
+					part: "snippet",
+					id: req.body.channelId,
+					headers: {
+						Authorization: 'Bearer ' + req.body.accessToken,
+						Accept: 'application/json',
+					}
+				},
+				function(err, data, response) {
+					if (err) {
+						console.error("Error: " + err);
+						res.json({
+							status: "error",
+							err: err,
+							data: response
+						});
+					}
+					if (data) {
+						console.log(data);
+						res.json({
+							status: "ok",
+							data: data
+						});
+					}
+					if (response) {
+						console.log(response);
+						console.log("Status code: " + response.statusCode);
+					}
+				}
+			);
+	});
 };

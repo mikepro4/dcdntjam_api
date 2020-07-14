@@ -76,6 +76,39 @@ module.exports = app => {
 		}
 		
 	});
+
+	app.post("/current_user_by_url", (req, res) => {
+		Users.findOne(
+			{
+				customUrl: req.body.customUrl
+			},
+			async (err, user) => {
+				if (user) {
+					res.json(user)
+				} else {
+					res.json(null)
+				}
+			}
+		);
+		
+	});
+
+	app.post("/current_user_by_channelId", (req, res) => {
+		Users.findOne(
+			{
+				channelId: req.body.channelId
+			},
+			async (err, user) => {
+				console.log(user)
+				if (user) {
+					res.json(user)
+				} else {
+					res.json(null)
+				}
+			}
+		);
+		
+	});
 };
 
 const buildQuery = criteria => {
