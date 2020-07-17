@@ -41,6 +41,7 @@ require("./routes/authRoutes")(app);
 require("./routes/userRoutes")(app);
 require("./routes/videoRoutes")(app);
 require("./routes/searchVideos")(app);
+require("./routes/searchUsers")(app);
 
 
 app.get("/", (req, res) => {

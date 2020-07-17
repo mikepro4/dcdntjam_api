@@ -4,7 +4,6 @@ const _ = require("lodash");
 
 module.exports = app => {
 	app.post("/search/videos", async (req, res) => {
-        console.log(req.body.criteria)
 		const { 
             criteria, 
             sortProperty, 
@@ -43,6 +42,86 @@ const buildQuery = criteria => {
             submittedBy: { $eq: criteria.submittedBy } 
 		});
 	}
+
+	if (criteria.video) {
+		// query.$text = { $search: criteria.video };
+
+		// _.assign(query, {
+		// 	"snippet.title": /criteria.video/
+		// });
+
+
+		_.assign(query, {
+			"$or": [
+				{"snippet.title": {
+					$regex: criteria.video,
+					$options: "i"
+				}},
+				{"snippet.channelTitle": {
+					$regex: criteria.video,
+					$options: "i"
+				}},
+				{"snippet.description": {
+					$regex: criteria.video,
+					$options: "i"
+				}}
+				
+			]
+		});
+
+		// _.assign(query, {
+		// 	"snippet.title": {
+		// 		$regex: criteria.video,
+		// 		$options: "i"
+		// 	}
+			
+		// });
+
+		// _.assign(query, {
+		// 	"snippet.channelTitle": {
+		// 		$regex: criteria.account,
+		// 		$options: "i"
+		// 	},
+		// });
+
+
+		// _.assign(query, {
+		// 	"snippet.title": {
+		// 		$regex: new RegExp("^" + criteria.video),
+		// 		$options: "i"
+		// 	}
+		// });
+	}
+
+	if (criteria.account) {
+		// query.$text = { $search: criteria.search };
+
+		// _.assign(query, {
+		// 	"snippet.channelTitle": {
+		// 		$regex: new RegExp("^" + criteria.search),
+		// 		$options: "i"
+		// 	}
+		// });
+
+		_.assign(query, {
+			"snippet.channelTitle": {
+				$regex: criteria.account,
+				$options: "i"
+			},
+
+		});
+	}
+
+	// if (criteria.channelName) {
+	// 	_.assign(query, {
+	// 		"snippet.channelTitle": {
+	// 			$regex: new RegExp("^" + criteria.channelName),
+	// 			$options: "i"
+	// 		}
+	// 	});
+	// }
+	
+	console.log(query)
 
 	return query;
 };
