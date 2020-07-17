@@ -63,7 +63,7 @@ module.exports = app => {
 						channelId: req.body.channelId,
 						snippet: req.body.snippet,
 						contentDetails: req.body.contentDetails,
-						submittedBy: req.body.userId,
+						submittedBy: req.body.googleId,
 						channelAvatar: req.body.channelAvatar
 					}).save();
 					res.json(video);
