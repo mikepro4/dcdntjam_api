@@ -80,5 +80,26 @@ module.exports = app => {
 			}
 		});
 	});
+
+	app.post("/video/view", async (req, res) => {
+		Video.update(
+			{
+				googleId: req.body.googleId,
+			},
+			{
+				$inc: { views: 1 } 
+			},
+			async (err, info) => {
+				if (err) res.status(400).send({ error: "true", error: err });
+				if (info) {
+					Video.findOne({ googleId: req.body.googleId }, async (err, user) => {
+						if (user) {
+							res.json(user);
+						}
+					});
+				}
+			}
+		);
+	});
  
 };

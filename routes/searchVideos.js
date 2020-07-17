@@ -11,7 +11,7 @@ module.exports = app => {
             limit 
         } = req.body;
 		const query = Video.find(buildQuery(criteria))
-			.sort({ [sortProperty]: -1 })
+			.sort(sortProperty)
 			.skip(offset)
 			.limit(limit);
 
